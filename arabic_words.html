@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قاعدة بيانات الكلمات القرآنية واللغوية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Amiri', serif;
+            background-color: #fcfbfa;
+            color: #1a1a1a;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #d4af37;
+        }
+        h1 {
+            text-align: center;
+            color: #0b5ed7;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+        }
+        .instructions {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .word-card {
+            background: #f8f9fa;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px 10px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            user-select: none;
+        }
+        .word-card:hover {
+            background: #eef2ff;
+            border-color: #0b5ed7;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(11, 94, 215, 0.15);
+        }
+        .word-card:active {
+            transform: translateY(0);
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>لوحة الكلمات التعليمية</h1>
+        <div class="instructions">اضغط على أي كلمة لنطقها بصوت واضح باللغة العربية الفصحى</div>
+        <div class="grid" id="wordGrid"></div>
+    </div>
+
+    <script>
+        const words = [
+            "وَانْحَرَ", "أَخْرَجَ", "أَرْسَلَ", "أَغْطَشَ",
+            "أَفْلَحَ", "أَكْرَمَ", "أَلْهَمَ", "أَنْشَرَ",
+            "أَنْقَضَ", "دَمْدَمَ", "عَسْعَسَ", "أَعْبُدُ",
+            "نَعْبُدُ", "يُخْرِجُ", "يَحْسَبُ", "يَشْرَبُ",
+            "يَشْهَدُ", "تَرْهَقُ", "تَعْرِفُ", "أُقْسِمُ",
+            "يُبْدِئُ", "يَنْفَخُ", "يَنْقَلِبُ", "يُوَسْوِسُ",
+            "ثَقُلَتْ", "حُشِرَتْ", "سُطِحَتْ", "كُشِطَتْ",
+            "نُشِرَتْ", "نُصِبَتْ", "أُثِرْنَ", "وَسَطْنَ",
+            "فُرِغَتْ", "تَأْتُونَ", "يُسْقَوْنَ", "يَفْعَلُونَ",
+            "يَعْمَلُونَ", "يَعْلَمُونَ", "يَضْحَكُونَ", "يَكْسِبُونَ",
+            "يَدْخُلُونَ", "يَنْظُرُونَ", "تَعْبُدُونَ", "أَنْعَمْتَ",
+            "أَنْذَرْنَا", "أَنْزَلْنَا", "خَلَقْنَا"
+        ];
+
+        const grid = document.getElementById('wordGrid');
+
+        function cleanTextForSpeech(text) {
+            // Remove Arabic diacritics (tashkeel) for better speech synthesis pronunciation
+            return text.replace(/[ًٌٍَُِّْ]/g, '');
+        }
+
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                // We use the cleaned word or full word. Modern TTS handles Arabic text well with or without tashkeel.
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 0.85; // Slightly slower for clarity
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('عذراً، متصفحك لا يدعم خاصية النطق الصوتي.');
+            }
+        }
+
+        words.forEach(word => {
+            const card = document.createElement('div');
+            card.className = 'word-card';
+            card.textContent = word;
+            card.title = 'اضغط للنطق';
+            card.addEventListener('click', () => {
+                speakWord(word);
+            });
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
